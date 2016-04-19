@@ -3,36 +3,77 @@
 # assumes feature is a dataset of feature representations for the items, 
 # and feature[i] is the row vector for the feature representation of 
 #feature i
-# assumes groups is the preclustered groups by user m, where each row is a cluster
+# assumes clusterGroups is the preclustered groups by user m, where each row is a cluster
 
 
-import numpy
+import numpy as np
 
-Gm = 0
-gm = np.zeros(len(feature[0]))
+global Gm
+global gm
 
-def algo2(i, m, Um, b, groups, feature, t):
-	global Gm
-	global gm
 
-	s = 1
-	i_group = NULL
-	for group in range(nrow(groups)):
-		for item in groups[group]:
-			if item == i: 
-				i_group = group
-			feat = feature[item]
-			Gm += np.dot(feat.transpose(),feat)
-			gm += feat
-	tm = t[m]
-	sameSum = 0
-	featureSum = np.zeros(len(feature[0]))
-	for elem in groups[i_group]:
-		sameSum += np.dot(feature[elem].tranpose(), feature[elem])
-		featureSum += feature[elem]
-	Phi = np.dot(np.dot(Um,(((s-tm)*sameSum) + (tm*(Gm-np.dot(feature[i].transpose(),feature[i]))))),Um)	
-	kappa1 = ((1-b)*s + (1-b)*tm)*featureSum
-	kappa2 = (1+b)*tm*(gm-feature[i])
-	phi = Um*(kappa1-kappa2)
-	return(Phi, phi)
+#literally copied this from algo_3.py
+def transform_X_m(user_m_cluster, x_i_groups):
+    """
+        This function takes all the transformed values of x_i
+        and creates an array X_m that has each transformed vector
+        as a column vector. We can then call on each column vector
+        when we need to do calculations later
+    """
+    (r,c) = x_i_groups.shape
+    #print(x_i_groups.shape)
+    clusters = [item for sublist in user_m_cluster for item in sublist]
+     
+    X_m = None
+    for cluster in user_m_cluster:
+        for i in range(len(cluster)):
+            if X_m == None:
+              X_m = x_i_groups[int(item)].reshape(c,1)
+            else:
+              X_m = np.concatenate((X_m, x_i_groups[int(item)].reshape(c,1)),axis=1)
+    return X_m
+    
+
+def algo2(item_i_index, Um, b, clusterGroups, t_m, x_i_groups):
+    global Gm
+    global gm
+
+    s = 1
+    #i_group = NULL	
+    X_m = transform_X_m(clusterGroups, x_i_groups)
+    (rows, cols) = X_m.shape
+
+    Gm = 0
+    gm = np.zeros((rows, 1), dtype = np.float)    
+
+    #this is the cluster that x_i is in
+    x_i_cluster = []
+    #clusterGroups is a list of lists
+    for cluster in clusterGroups:
+        if item_i_index in cluster:
+            x_i_cluster = cluster
+        for item in cluster:
+            x_j = X_m[:,int(item)]
+            Gm += np.dot(x_j,np.transpose(x_j))
+            gm = gm + x_j 
+            #gm += x_j
+    #print(item_i_index)
+    x_i = X_m[:, item_i_index]
+    big_phi_sum = 0
+    kappa_1_sum = np.zeros((rows, 1), dtype = np.float)
+    for item in x_i_cluster:
+        x_j = X_m[:,int(item)]
+        kappa_1_sum += x_j
+        big_phi_sum += x_j.dot(np.transpose(x_j)) + t_m*(Gm-(x_i.dot(np.transpose(x_i))))
+    
+    bigPhi = Um.dot(((s-t_m)*big_phi_sum) * Um)
+    
+    #kappa_1 is 217x1
+    kappa_1 = ((1-b)*s + (1+b)*t_m)*kappa_1_sum
+    #kappa_2 is also 217x1
+    kappa_2 = (1 + b)*t_m*(gm-x_i)
+
+    littlePhi = Um.dot(kappa_1 - kappa_2)    
+
+    return(bigPhi, littlePhi)
 
