@@ -1,0 +1,79 @@
+*******************************************************************************
+*******************************************************************************
+***
+***    Collaborative Clustering Dataset
+*** 
+***    Author: Yisong Yue
+***
+*******************************************************************************
+*******************************************************************************
+
+
+*** REFERENCE ***
+"Personalized Collaborative Clustering"
+International World Wide Web Conference, 2014
+Yisong Yue, Chong Wang, Khalid El-Arini, and Carlos Guestrin
+
+
+*** INTRODUCTION ***
+
+This folder contains the relevant data files from the above publication. This 
+dataset is freely available for non-commercial research purposes, but any 
+publications and preprints using this dataset must cite the above reference.
+
+In particular, this folder contains clustering data of how different users 
+would organize attractions in Paris when planning a hypothetical trip there.
+The data was collected using a clustering interface on Amazon Mechanical Turk.
+The most pertinent data is how different users created different partial
+clusterings.
+
+
+*** DESCRIPTION OF FILES ***
+
+"attraction_information"
+This is a tab delimited file containing attraction ids, attraction names, and 
+an associated URL.  All attractions are from Paris.
+
+"attraction_mapping"
+This file contains a a sorted list of attraction ids.  This file serves as a 
+mapping from the attraction ids in "attraction_information" to a 0-indexed
+attraction id used in "clusttering_data".  For example, the first attraction
+d232159 maps to 0.
+
+"clustering_data"
+This file contains the clusterings created by users.  Each line is a user, and
+contains clusters delimited by colons.  Users only cluster attractions that 
+they rate as itneresting.  The last group of attractions are attractions that 
+the user rated as not interesting, and so are not clustered.
+
+For example, the fist line contains:
+0 1 2 3 4 5 6 7 8 9:10 11 12:13 14 15 16:17:18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
+This means that the user created 4 clusters.  The first cluster has attractions
+0-9, the second cluster has attractions 10-12, the third cluster has attractions
+13-16, and the final cluster has attraction 17.  The user rated attractions 
+18-47 as not interesting.  NOTE that we only used the items clustered (and
+thus rated interesting by users) in our experiments.
+
+"feature1"
+Each line in this file contains tf-idf features of one attraction.  Each line
+is synchronized with each line in "attraction_mapping".  Each line is space
+delimited, with each feature taking formulation [feature_id]:[feature_value].
+All features are text-mined from Wikipedia, so some lines may be empty -- this
+happens when we cannot find an associated Wikipedia entry for the attraction.
+
+"feature1_svd"
+This is a transfomation of "feature1" using dimensionality reduction via the
+singular value decomposition.  This was the actual feature1 dataset used in
+the experiments in the paper.
+
+"feature1_text_tfidf"
+This is the raw tf-idf information of the attractions, as mined from Wikipedia.
+
+"feature2"
+Each line in this file contains keyword tagged features of one attraction. 
+Each line is synchronized with each line in "attraction_mapping".  Each line is
+space delimited, taking formulation [feature_id]:[feature_value].  The tagging
+process is described in Section 5.2 in the paper.
+
+"feature2_keywords"
+This is the list of keywords we chose for tagging for "feature2".

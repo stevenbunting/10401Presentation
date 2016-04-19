@@ -12,7 +12,7 @@ Relevant functions:
     self.get_item_info(index)			-> returns [name, url] for item
     self.get_category_info(index)		-> returns category name for that index (used in feature2)
  
-When instantiating a new instance use this line:
+When instantiating a new instance just call:
 text_processing("feature1_svd", "feature2", "clustering_data", "attraction_mapping", "attraction_information", "feature2_keywords")
 
 """
