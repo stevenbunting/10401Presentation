@@ -25,15 +25,15 @@ def algo2(i, m, Um, b, groups, feature):
 			if item == i, 
 				i_group = group
 			feat = np.matrix(feature[item])
-			Gm += feat * feat.transpose()
+			Gm += feat.transpose() * feat
 			gm += feat
 	tm = float(links) / (total * (total-1))
 	sameSum = 0
 	featureSum = np.zeros(len(feature[0]))
 	for elem in groups[i_group]:
-		sameSum += np.matrix(feature[elem]) * np.matrix(feature[elem]).transpose()
+		sameSum += np.matrix(feature[elem]).tranpose() * np.matrix(feature[elem])
 		featureSum += np.matrix(feature[elem])
-	Phi = Um*(((s-tm)*sameSum) + (tm*(Gm-np.matrix(feature[i])*np.matrix(feature[i]).transpose())))*Um		
+	Phi = Um*(((s-tm)*sameSum) + (tm*(Gm-np.matrix(feature[i]).transpose()*np.matrix(feature[i])))*Um		
 	kappa1 = ((1-b)*s + (1-b)*tm)*featureSum
 	kappa2 = (1+b)*tm*(gm-np.matrix(feature[i]))
 	phi = Um*(kappa1-kappa2)
