@@ -1,6 +1,6 @@
 import random
 
-# holdout 50% of each cluster
+# holdout 25% of each cluster
 
 allData = text_processing("feature1_svd", "feature2", "clustering_data", "attraction_mapping", "attraction_information", "feature2_keywords")
 
