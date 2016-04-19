@@ -48,22 +48,35 @@ def algo2(item_i_index, Um, b, clusterGroups, t_m, x_i_groups):
 
     #this is the cluster that x_i is in
     x_i_cluster = []
+    x_i_index = 0
     #clusterGroups is a list of lists
+
+    track_index = 0
+    x_i_cluster_index = 0
+    x_i_cluster_start = 0
+
     for cluster in clusterGroups:
-        if item_i_index in cluster:
-            x_i_cluster = cluster
-        for item in cluster:
-            x_j = X_m[:,int(item)]
+        for item in xrange(len(cluster)):
+            if(int(cluster[item]) == item_i_index):
+                x_i_cluster = cluster            #store cluster x_i is in
+                x_i_index = item + track_index   #store what index x_i is in in X_m
+		x_i_cluster_start = track_index  #store where cluster starts in X_m
+
+            x_j = X_m[:,(item + track_index)]
             Gm += np.dot(x_j,np.transpose(x_j))
             gm = gm + x_j 
+        track_index = track_index + len(cluster)
             #gm += x_j
     #print(item_i_index)
-    x_i = X_m[:, item_i_index]
+    x_i = X_m[:, x_i_index]
     big_phi_sum = 0
     kappa_1_sum = np.zeros((rows, 1), dtype = np.float)
-    for item in x_i_cluster:
-        x_j = X_m[:,int(item)]
-        kappa_1_sum += x_j
+    for index in xrange(x_i_cluster_start, (x_i_cluster_start+len(x_i_cluster))):
+        if(index == x_i_index):
+            # this is x_i
+            pass
+        x_j = X_m[:,index]
+        kappa_1_sum = kappa_1_sum + x_j
         big_phi_sum += x_j.dot(np.transpose(x_j)) + t_m*(Gm-(x_i.dot(np.transpose(x_i))))
     
     bigPhi = Um.dot(((s-t_m)*big_phi_sum) * Um)
