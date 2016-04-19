@@ -11,7 +11,7 @@ import numpy
 Gm = 0
 gm = np.zeros(len(feature[0]))
 
-def algo2(i, m):
+def algo2(i, m, Um, b, groups, feature):
 	global Gm
 	global gm
 	s = 1
@@ -33,9 +33,9 @@ def algo2(i, m):
 	for elem in groups[i_group]:
 		sameSum += np.matrix(feature[elem]) * np.matrix(feature[elem]).transpose()
 		featureSum += np.matrix(feature[elem])
-	Phi = Vm*(((s-tm)*sameSum) + (tm*(Gm-np.matrix(feature[i])*np.matrix(feature[i]).transpose())))*Vm		
+	Phi = Um*(((s-tm)*sameSum) + (tm*(Gm-np.matrix(feature[i])*np.matrix(feature[i]).transpose())))*Um		
 	kappa1 = ((1-b)*s + (1-b)*tm)*featureSum
 	kappa2 = (1+b)*tm*(gm-np.matrix(feature[i]))
-	phi = Vm*(kappa1-kappa2)
+	phi = Um*(kappa1-kappa2)
 	return(Phi, phi)
 
