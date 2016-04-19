@@ -20,10 +20,17 @@ def transform_X_m(user_m_cluster, x_i_groups):
         as a column vector. We can then call on each column vector
         when we need to do calculations later
     """
-    X_m = np.empty()
+    (r,c) = x_i_groups.shape
+    #print(x_i_groups.shape)
+    clusters = [item for sublist in user_m_cluster for item in sublist]
+     
+    X_m = None
     for cluster in user_m_cluster:
-        for item in cluster:
-            np.hstack(X_m, np.transpose(x_i_groups[int[item]]))
+        for i in range(len(cluster)):
+            if X_m == None:
+              X_m = x_i_groups[int(item)].reshape(c,1)
+            else:
+              X_m = np.concatenate((X_m, x_i_groups[int(item)].reshape(c,1)),axis=1)
     return X_m
     
 
@@ -33,8 +40,7 @@ def algo2(item_i_index, Um, b, clusterGroups, t_m, x_i_groups):
 
     s = 1
     #i_group = NULL	
-
-    X_m = transform_X_m(clusterGroups, x_i_groups) 
+    X_m = transform_X_m(clusterGroups, x_i_groups)
     (rows, cols) = X_m.shape
 
     Gm = 0
@@ -43,14 +49,15 @@ def algo2(item_i_index, Um, b, clusterGroups, t_m, x_i_groups):
     #this is the cluster that x_i is in
     x_i_cluster = []
     #clusterGroups is a list of lists
-    for cluster in xrange(len(clusterGroups)):
-	if (item_i_index in cluster):
+    for cluster in clusterGroups:
+        if item_i_index in cluster:
             x_i_cluster = cluster
-	for item in cluster:
+        for item in cluster:
             x_j = X_m[:,int(item)]
-            Gm += x_j.dot(np.transpose(x_j))
-            gm += x_j
-
+            Gm += np.dot(x_j,np.transpose(x_j))
+            gm = gm + x_j 
+            #gm += x_j
+    #print(item_i_index)
     x_i = X_m[:, item_i_index]
     big_phi_sum = 0
     kappa_1_sum = np.zeros((rows, 1), dtype = np.float)

@@ -32,7 +32,10 @@ def solve_h(user_m_cluster, X_m):
 
 def solve_X_m(user_m_cluster, x_i_groups):
     #creates a unique X_m cluster that is tranposed from given X_m
-    X_m = numpy.empty()
+    (r,c) = x_i_groups.shape
+    clusters = [item for sublist in user_m_cluster for item in sublist]
+
+    X_m = numpy.empty(c,len(sublist))
     for cluster in user_m_cluster:
 	for item in cluster:
 	    # this will create a 217 x num_items_in_cluster array
